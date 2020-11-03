@@ -7,4 +7,4 @@ The starting point of our implementation is this [github gist](https://gist.gith
 Our toy implementation is not meant to be secure or optimized for efficiency. We did it to better understand the inner workings of the [FV12] scheme, so you can use it as a learning tool.
 
 ## How to run
-The $\texttt{rlwe_he_scheme_updated.py}$ file contains the algorithms of the HE scheme. You can run $\texttt{main.py}$ to play with computing on encrypted data. Have fun! :smile:
+The rlwe_he_scheme_updated.py file contains the algorithms of the HE scheme. You can run main.py to play with computing on encrypted data. Have fun! :smile:
