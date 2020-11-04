@@ -164,7 +164,7 @@ def evaluate_keygen_v1(sk, size, modulus, T, poly_mod, std2):
     return rlk0, rlk1
 
 def evaluate_keygen_v2(sk, size, modulus, poly_mod, extra_modulus, std2):
-    """Generate a public and secret keys
+    """Generate a relinearization key using version 2.
         Args:
             sk: secret key.
             size: size of the polynomials.
