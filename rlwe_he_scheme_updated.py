@@ -99,7 +99,15 @@ def gen_normal_poly(size, mean, std):
 #==============================================================
 
 # -------- Function for returning n's coefficients in base b ( lsb is on the left) ---
-def int2base(n,b): 
+def int2base(n, b):
+    """Generates the base decomposition of an integer n
+    Args:
+        n: integer to be decomposed
+        b: base
+    Returns:
+        array of coefficients from the base decomposition of n
+        with the coeff[i] being the coeff of b ^ i.
+    """
     if n < b:
         return [n]
     else:
@@ -320,14 +328,14 @@ def mul_cipher_v1(ct1, ct2, q, t, T, poly_mod , rlk0, rlk1):
     c_2 = np.int64(np.concatenate( (c_2, [0] * (n - len(c_2))) )) #pad
 
     #Next, we decompose c_2 in base T: 
-    #more precisely, each coefficient of c_2 is decomposed in base T such that c_2 = sum T**i * c_2(i)
+    #more precisely, each coefficient of c_2 is decomposed in base T such that c_2 = sum T**i * c_2(i).
     Reps = np.zeros((n, l + 1), dtype = np.int64)
     for i in range(n):
         rep = int2base(c_2[i], T)
         rep2 = rep + [0] * (l + 1 - len(rep)) #pad with 0
         Reps[i] = np.array(rep2, dtype=np.int64)
-    # Each row Reps[i] is the base T representation of the i-th coefficient c_2[i]
-    # The polynomials c_2(j)are given by the columns Reps[:,j]
+    # Each row Reps[i] is the base T representation of the i-th coefficient c_2[i].
+    # The polynomials c_2(j) are given by the columns Reps[:,j].
 
     c_20 = np.zeros(shape=n)
     c_21 = np.zeros(shape=n)
