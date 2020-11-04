@@ -100,10 +100,10 @@ def gen_normal_poly(size, mean, std):
 
 # -------- Function for returning n's coefficients in base b ( lsb is on the left) ---
 def int2base(n, b):
-    """Generates the base decomposition of an integer n
+    """Generates the base decomposition of an integer n.
     Args:
-        n: integer to be decomposed
-        b: base
+        n: integer to be decomposed.
+        b: base.
     Returns:
         array of coefficients from the base decomposition of n
         with the coeff[i] being the coeff of b ^ i.
@@ -121,7 +121,7 @@ def keygen(size, modulus, poly_mod, std1):
         size: size of the polynoms for the public and secret keys.
         modulus: coefficient modulus.
         poly_mod: polynomial modulus.
-        std1: standard deviation of the error
+        std1: standard deviation of the error.
     Returns:
         Public and secret key.
     """
@@ -133,16 +133,16 @@ def keygen(size, modulus, poly_mod, std1):
 
 
 def evaluate_keygen_v1(sk, size, modulus, T, poly_mod, std2):
-    """Generate a public and secret keys
+    """Generate a relinearization key using version 1.
         Args:
-            sk: secret key
+            sk: secret key.
             size: size of the polynomials.
             modulus: coefficient modulus.
             T: base.
             poly_mod: polynomial modulus.
-            std2: standard deviation for the error distribution
+            std2: standard deviation for the error distribution.
         Returns:
-            rlk0, rlk1: relinearization key
+            rlk0, rlk1: relinearization key.
         """
     n = len(poly_mod) - 1
     l = np.int(np.log(modulus) / np.log(T))
@@ -166,14 +166,14 @@ def evaluate_keygen_v1(sk, size, modulus, T, poly_mod, std2):
 def evaluate_keygen_v2(sk, size, modulus, poly_mod, extra_modulus, std2):
     """Generate a public and secret keys
         Args:
-            sk: secret key
+            sk: secret key.
             size: size of the polynomials.
             modulus: coefficient modulus.
             poly_mod: polynomial modulus.
-            extra_modulus: the "p" modulus for modulus switching
-            st2: standard deviation for the error distribution
+            extra_modulus: the "p" modulus for modulus switching.
+            st2: standard deviation for the error distribution.
         Returns:
-            rlk0, rlk1: relinearization key
+            rlk0, rlk1: relinearization key.
         """
     new_modulus = modulus * extra_modulus
     a = gen_uniform_poly(size, new_modulus)
@@ -217,7 +217,7 @@ def encrypt(pk, size, q, t, poly_mod, pt, std1):
 
 
 def decrypt(sk, q, t, poly_mod, ct):
-    """Decrypt a ciphertext
+    """Decrypt a ciphertext.
     Args:
         sk: secret-key.
         size: size of polynomials.
@@ -299,7 +299,7 @@ def multiplication_coeffs(ct1, ct2, q, t, poly_mod):
             t: plaintext modulus.
             poly_mod: polynomial modulus.
         Returns:
-            Triplet (c0,c1,c2) encoding the multiplied ciphertexts
+            Triplet (c0,c1,c2) encoding the multiplied ciphertexts.
         """
 
     c_0 = np.int64(np.round(polymul_wm(ct1[0], ct2[0], poly_mod) * t / q)) % q
@@ -317,7 +317,7 @@ def mul_cipher_v1(ct1, ct2, q, t, T, poly_mod , rlk0, rlk1):
         t: plaintext modulus.
         T: base
         poly_mod: polynomial modulus.
-        rlk0, rlk1: output of the EvaluateKeygen_v1 function
+        rlk0, rlk1: output of the EvaluateKeygen_v1 function.
     Returns:
         Tuple representing a ciphertext.
     """
@@ -356,12 +356,12 @@ def mul_cipher_v2(ct1, ct2, q, t, p, poly_mod, rlk0, rlk1):
     """Multiply two ciphertexts.
     Args:
         ct1: first ciphertext.
-        ct2: second ciphertext
+        ct2: second ciphertext.
         q: ciphertext modulus.
         t: plaintext modulus.
-        p: modulus-swithcing modulus
+        p: modulus-swithcing modulus.
         poly_mod: polynomial modulus.
-        rlk0, rlk1: output of the EvaluateKeygen_v2 function
+        rlk0, rlk1: output of the EvaluateKeygen_v2 function.
     Returns:
         Tuple representing a ciphertext.
     """
