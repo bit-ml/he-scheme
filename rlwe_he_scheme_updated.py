@@ -121,7 +121,7 @@ def keygen(size, modulus, poly_mod, std1):
         size: size of the polynoms for the public and secret keys.
         modulus: coefficient modulus.
         poly_mod: polynomial modulus.
-        std1:standard deviation of the error
+        std1: standard deviation of the error
     Returns:
         Public and secret key.
     """
