@@ -8,7 +8,7 @@ import numpy as np
 from numpy.polynomial import polynomial as poly
 
 #------Functions for polynomial evaluations mod poly_mod only------
-def polymul_wm(x,y,poly_mod):
+def polymul_wm(x, y, poly_mod):
     """Multiply two polynomials
     Args:
         x, y: two polynomials to be multiplied.
@@ -18,7 +18,7 @@ def polymul_wm(x,y,poly_mod):
     """ 
     return poly.polydiv(poly.polymul(x, y), poly_mod)[1]
 
-def polyadd_wm(x,y,poly_mod):
+def polyadd_wm(x, y, poly_mod):
     """Add two polynomials
         Args:
             x, y: two polynomials to be added.
@@ -119,12 +119,12 @@ def keygen(size, modulus, poly_mod, std1):
     """
     s = gen_binary_poly(size)
     a = gen_uniform_poly(size, modulus)
-    e = gen_normal_poly(size,0,std1)
+    e = gen_normal_poly(size, 0, std1)
     b = polyadd(polymul(-a, s, modulus, poly_mod), -e, modulus, poly_mod)
     return (b, a), s
 
 
-def evaluate_keygen_v1(sk, size, modulus, T, poly_mod,std2):
+def evaluate_keygen_v1(sk, size, modulus, T, poly_mod, std2):
     """Generate a public and secret keys
         Args:
             sk: secret key
@@ -138,15 +138,15 @@ def evaluate_keygen_v1(sk, size, modulus, T, poly_mod,std2):
         """
     n = len(poly_mod) - 1
     l = np.int(np.log(modulus) / np.log(T))
-    rlk0 = np.zeros((l+1,n),dtype=np.int64)
-    rlk1 = np.zeros((l+1,n),dtype=np.int64)
+    rlk0 = np.zeros((l + 1, n), dtype=np.int64)
+    rlk1 = np.zeros((l + 1, n), dtype=np.int64)
     for i in range(l + 1):
-        a = gen_uniform_poly(size,modulus)
-        e = gen_normal_poly(size,0,std2)
-        secret_part = T**i * poly.polymul(sk,sk)
+        a = gen_uniform_poly(size, modulus)
+        e = gen_normal_poly(size, 0, std2)
+        secret_part = T ** i * poly.polymul(sk, sk)
         b = np.int64(polyadd(
-        polymul_wm(-a, sk,poly_mod),
-        polyadd_wm(-e,secret_part,poly_mod),modulus,poly_mod))
+        polymul_wm(-a, sk, poly_mod),
+        polyadd_wm(-e, secret_part, poly_mod), modulus, poly_mod))
 
         b = np.int64(np.concatenate( (b, [0] * (n - len(b)) ) )) #pad b 
         a = np.int64(np.concatenate( (a, [0] * (n - len(a)) ) )) # pad a    
@@ -155,7 +155,7 @@ def evaluate_keygen_v1(sk, size, modulus, T, poly_mod,std2):
         rlk1[i] = a
     return rlk0, rlk1
 
-def evaluate_keygen_v2(sk, size, modulus, poly_mod, extra_modulus,std2):
+def evaluate_keygen_v2(sk, size, modulus, poly_mod, extra_modulus, std2):
     """Generate a public and secret keys
         Args:
             sk: secret key
@@ -168,13 +168,13 @@ def evaluate_keygen_v2(sk, size, modulus, poly_mod, extra_modulus,std2):
             rlk0, rlk1: relinearization key
         """
     new_modulus = modulus * extra_modulus
-    a = gen_uniform_poly(size,new_modulus)
-    e = gen_normal_poly(size,0,std2)
-    secret_part = extra_modulus * poly.polymul(sk,sk)
+    a = gen_uniform_poly(size, new_modulus)
+    e = gen_normal_poly(size, 0, std2)
+    secret_part = extra_modulus * poly.polymul(sk, sk)
 
     b = np.int64(polyadd_wm(
-        polymul_wm(-a, sk,poly_mod),
-        polyadd_wm(-e,secret_part,poly_mod),poly_mod)) % new_modulus
+        polymul_wm(-a, sk, poly_mod),
+        polyadd_wm(-e, secret_part, poly_mod), poly_mod)) % new_modulus
     return b, a
 
 def encrypt(pk, size, q, t, poly_mod, pt, std1): 
@@ -294,9 +294,9 @@ def multiplication_coeffs(ct1, ct2, q, t, poly_mod):
             Triplet (c0,c1,c2) encoding the multiplied ciphertexts
         """
 
-    c_0 = np.int64(np.round(polymul_wm(ct1[0], ct2[0], poly_mod) * t/q)) % q
-    c_1 = np.int64(np.round(polyadd_wm(polymul_wm(ct1[0],ct2[1],poly_mod), polymul_wm(ct1[1],ct2[0],poly_mod),poly_mod) * t/q)) % q 
-    c_2 = np.int64(np.round(polymul_wm(ct1[1], ct2[1], poly_mod) * t/q)) % q
+    c_0 = np.int64(np.round(polymul_wm(ct1[0], ct2[0], poly_mod) * t / q)) % q
+    c_1 = np.int64(np.round(polyadd_wm(polymul_wm(ct1[0], ct2[1], poly_mod), polymul_wm(ct1[1], ct2[0], poly_mod), poly_mod) * t / q)) % q 
+    c_2 = np.int64(np.round(polymul_wm(ct1[1], ct2[1], poly_mod) * t / q)) % q
     return c_0, c_1, c_2
 
 
@@ -321,7 +321,7 @@ def mul_cipher_v1(ct1, ct2, q, t, T, poly_mod , rlk0 , rlk1):
 
     #Next, we decompose c_2 in base T: 
     #more precisely, each coefficient of c_2 is decomposed in base T such that c_2 = sum T**i * c_2(i)
-    Reps = np.zeros((n,l + 1), dtype = np.int64)
+    Reps = np.zeros((n, l + 1), dtype = np.int64)
     for i in range(n):
         rep = int2base(c_2[i],T)
         rep2 = rep + [0] * (l + 1 - len(rep)) #pad with 0
@@ -332,9 +332,9 @@ def mul_cipher_v1(ct1, ct2, q, t, T, poly_mod , rlk0 , rlk1):
     c_20 = np.zeros(shape=n)
     c_21 = np.zeros(shape=n)
     # Here we compute the sums: rlk[j][0] * c_2(j) and rlk[j][1] * c_2(j) 
-    for j in range(l+1):
-        c_20 = polyadd_wm(c_20, polymul_wm(rlk0[j], Reps[:,j],poly_mod),poly_mod)
-        c_21 = polyadd_wm(c_21, polymul_wm(rlk1[j], Reps[:,j],poly_mod),poly_mod)
+    for j in range(l + 1):
+        c_20 = polyadd_wm(c_20, polymul_wm(rlk0[j], Reps[:,j], poly_mod), poly_mod)
+        c_21 = polyadd_wm(c_21, polymul_wm(rlk1[j], Reps[:,j], poly_mod), poly_mod)
 
     c_20 = np.int64(np.round(c_20)) % q
     c_21 = np.int64(np.round(c_21)) % q
@@ -359,11 +359,11 @@ def mul_cipher_v2(ct1, ct2, q, t, p, poly_mod , rlk0 , rlk1):
     """
     c_0, c_1, c_2 = multiplication_coeffs(ct1, ct2, q, t, poly_mod)
 
-    c_20 = np.int64(np.round(polymul_wm(c_2, rlk0,poly_mod)/ p)) % q
-    c_21 = np.int64(np.round(polymul_wm(c_2, rlk1,poly_mod)/ p)) % q
+    c_20 = np.int64(np.round(polymul_wm(c_2, rlk0, poly_mod) / p)) % q
+    c_21 = np.int64(np.round(polymul_wm(c_2, rlk1, poly_mod) / p)) % q
 
-    new_c0 = np.int64(polyadd_wm(c_0, c_20,poly_mod)) % q
-    new_c1 = np.int64(polyadd_wm(c_1, c_21,poly_mod)) % q
+    new_c0 = np.int64(polyadd_wm(c_0, c_20, poly_mod)) % q
+    new_c1 = np.int64(polyadd_wm(c_1, c_21, poly_mod)) % q
     return (new_c0, new_c1)
 #==============================================================
 
