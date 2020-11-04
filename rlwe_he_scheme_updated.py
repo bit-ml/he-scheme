@@ -148,7 +148,7 @@ def evaluate_keygen_v1(sk, size, modulus, T, poly_mod, std2):
         polymul_wm(-a, sk, poly_mod),
         polyadd_wm(-e, secret_part, poly_mod), modulus, poly_mod))
 
-        b = np.int64(np.concatenate( (b, [0] * (n - len(b)) ) )) #pad b 
+        b = np.int64(np.concatenate( (b, [0] * (n - len(b)) ) )) # pad b 
         a = np.int64(np.concatenate( (a, [0] * (n - len(a)) ) )) # pad a    
 
         rlk0[i] = b
@@ -192,8 +192,8 @@ def encrypt(pk, size, q, t, poly_mod, pt, std1):
     m = np.array(pt + [0] * (size - len(pt)), dtype=np.int64) % t
     delta = q // t
     scaled_m = delta * m
-    e1 = gen_normal_poly(size,0,std1)
-    e2 = gen_normal_poly(size,0,std1)
+    e1 = gen_normal_poly(size, 0, std1)
+    e2 = gen_normal_poly(size, 0, std1)
     u = gen_binary_poly(size)
     ct0 = polyadd(
         polyadd(
@@ -300,7 +300,7 @@ def multiplication_coeffs(ct1, ct2, q, t, poly_mod):
     return c_0, c_1, c_2
 
 
-def mul_cipher_v1(ct1, ct2, q, t, T, poly_mod , rlk0 , rlk1):
+def mul_cipher_v1(ct1, ct2, q, t, T, poly_mod , rlk0, rlk1):
     """Multiply two ciphertexts.
     Args:
         ct1: first ciphertext.
@@ -323,7 +323,7 @@ def mul_cipher_v1(ct1, ct2, q, t, T, poly_mod , rlk0 , rlk1):
     #more precisely, each coefficient of c_2 is decomposed in base T such that c_2 = sum T**i * c_2(i)
     Reps = np.zeros((n, l + 1), dtype = np.int64)
     for i in range(n):
-        rep = int2base(c_2[i],T)
+        rep = int2base(c_2[i], T)
         rep2 = rep + [0] * (l + 1 - len(rep)) #pad with 0
         Reps[i] = np.array(rep2, dtype=np.int64)
     # Each row Reps[i] is the base T representation of the i-th coefficient c_2[i]
@@ -344,7 +344,7 @@ def mul_cipher_v1(ct1, ct2, q, t, T, poly_mod , rlk0 , rlk1):
 
     return (new_c0, new_c1)
 
-def mul_cipher_v2(ct1, ct2, q, t, p, poly_mod , rlk0 , rlk1):
+def mul_cipher_v2(ct1, ct2, q, t, p, poly_mod, rlk0, rlk1):
     """Multiply two ciphertexts.
     Args:
         ct1: first ciphertext.
