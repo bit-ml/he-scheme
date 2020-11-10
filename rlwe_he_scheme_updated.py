@@ -185,7 +185,7 @@ def evaluate_keygen_v2(sk, size, modulus, poly_mod, extra_modulus, std2):
         polyadd_wm(-e, secret_part, poly_mod), poly_mod)) % new_modulus
     return b, a
 
-def encrypt(pk, size, q, t, poly_mod, pt, std1): 
+def encrypt(pk, size, q, t, poly_mod, m, std1): 
     """Encrypt an integer.
     Args:
         pk: public-key.
@@ -193,11 +193,11 @@ def encrypt(pk, size, q, t, poly_mod, pt, std1):
         q: ciphertext modulus.
         t: plaintext modulus.
         poly_mod: polynomial modulus.
-        pt: plaintext message, as an integer vector (of length <= size) with entries mod t.
+        m: plaintext message, as an integer vector (of length <= size) with entries mod t.
     Returns:
         Tuple representing a ciphertext.
     """
-    m = np.array(pt + [0] * (size - len(pt)), dtype=np.int64) % t
+    m = np.array(m + [0] * (size - len(m)), dtype=np.int64) % t
     delta = q // t
     scaled_m = delta * m
     e1 = gen_normal_poly(size, 0, std1)
