@@ -108,10 +108,7 @@ def int2base(n, b):
         array of coefficients from the base decomposition of n
         with the coeff[i] being the coeff of b ^ i.
     """
-    if n < b:
-        return [n]
-    else:
-        return [n % b] + int2base(n // b, b)
+    return [n] if n < b else [n % b] + int2base(n // b, b)
 
 
 # ------ Functions for keygen, encryption and decryption ------
