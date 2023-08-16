@@ -230,7 +230,7 @@ def decrypt(sk, size, q, t, poly_mod, ct):
         ct[0], q, poly_mod
     )
     decrypted_poly = np.round(t * scaled_pt / q) % t
-    decrypted_poly_1 = [i for i in decrypted_poly]
+    decrypted_poly_1 = list(decrypted_poly)
     bound = len(decrypted_poly_1)
     if bound<size:
         number_of_zeros_to_pad = size-bound
