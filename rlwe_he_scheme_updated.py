@@ -15,7 +15,7 @@ def polymul_wm(x, y, poly_mod):
         poly_mod: polynomial modulus.
     Returns:
         A polynomial in Z[X]/(poly_mod).
-    """ 
+    """
     return poly.polydiv(poly.polymul(x, y), poly_mod)[1]
 
 def polyadd_wm(x, y, poly_mod):
@@ -111,7 +111,7 @@ def int2base(n, b):
     if n < b:
         return [n]
     else:
-        return [n % b] + int2base(n // b, b)    
+        return [n % b] + int2base(n // b, b)
 
 
 # ------ Functions for keygen, encryption and decryption ------
@@ -145,7 +145,7 @@ def evaluate_keygen_v1(sk, size, modulus, T, poly_mod, std2):
             rlk0, rlk1: relinearization key.
         """
     n = len(poly_mod) - 1
-    l = np.int(np.log(modulus) / np.log(T))
+    l = np.int64(np.log(modulus) / np.log(T))
     rlk0 = np.zeros((l + 1, n), dtype=np.int64)
     rlk1 = np.zeros((l + 1, n), dtype=np.int64)
     for i in range(l + 1):
@@ -156,8 +156,8 @@ def evaluate_keygen_v1(sk, size, modulus, T, poly_mod, std2):
         polymul_wm(-a, sk, poly_mod),
         polyadd_wm(-e, secret_part, poly_mod), modulus, poly_mod))
 
-        b = np.int64(np.concatenate( (b, [0] * (n - len(b)) ) )) # pad b 
-        a = np.int64(np.concatenate( (a, [0] * (n - len(a)) ) )) # pad a    
+        b = np.int64(np.concatenate( (b, [0] * (n - len(b)) ) )) # pad b
+        a = np.int64(np.concatenate( (a, [0] * (n - len(a)) ) )) # pad a
 
         rlk0[i] = b
         rlk1[i] = a
@@ -185,7 +185,7 @@ def evaluate_keygen_v2(sk, size, modulus, poly_mod, extra_modulus, std2):
         polyadd_wm(-e, secret_part, poly_mod), poly_mod)) % new_modulus
     return b, a
 
-def encrypt(pk, size, q, t, poly_mod, m, std1): 
+def encrypt(pk, size, q, t, poly_mod, m, std1):
     """Encrypt an integer.
     Args:
         pk: public-key.
@@ -216,7 +216,7 @@ def encrypt(pk, size, q, t, poly_mod, m, std1):
     return (ct0, ct1)
 
 
-def decrypt(sk, q, t, poly_mod, ct):
+def decrypt(sk, size, q, t, poly_mod, ct):
     """Decrypt a ciphertext.
     Args:
         sk: secret-key.
@@ -233,7 +233,16 @@ def decrypt(sk, q, t, poly_mod, ct):
         ct[0], q, poly_mod
     )
     decrypted_poly = np.round(t * scaled_pt / q) % t
-    return np.int64(decrypted_poly)
+    decrypted_poly_1 = [i for i in decrypted_poly]
+    bound = len(decrypted_poly_1)
+    if bound<size:
+        number_of_zeros_to_pad = size-bound
+        list_to_append = [0] * number_of_zeros_to_pad
+        decrypted_poly_to_return = np.append(decrypted_poly, list_to_append) #pad with 0
+    else:
+        decrypted_poly_to_return = decrypted_poly
+    return np.int64(decrypted_poly_to_return)
+
 #==============================================================
 
 
@@ -303,7 +312,7 @@ def multiplication_coeffs(ct1, ct2, q, t, poly_mod):
         """
 
     c_0 = np.int64(np.round(polymul_wm(ct1[0], ct2[0], poly_mod) * t / q)) % q
-    c_1 = np.int64(np.round(polyadd_wm(polymul_wm(ct1[0], ct2[1], poly_mod), polymul_wm(ct1[1], ct2[0], poly_mod), poly_mod) * t / q)) % q 
+    c_1 = np.int64(np.round(polyadd_wm(polymul_wm(ct1[0], ct2[1], poly_mod), polymul_wm(ct1[1], ct2[0], poly_mod), poly_mod) * t / q)) % q
     c_2 = np.int64(np.round(polymul_wm(ct1[1], ct2[1], poly_mod) * t / q)) % q
     return c_0, c_1, c_2
 
@@ -327,7 +336,7 @@ def mul_cipher_v1(ct1, ct2, q, t, T, poly_mod , rlk0, rlk1):
     c_0, c_1, c_2 = multiplication_coeffs(ct1, ct2, q, t, poly_mod)
     c_2 = np.int64(np.concatenate( (c_2, [0] * (n - len(c_2))) )) #pad
 
-    #Next, we decompose c_2 in base T: 
+    #Next, we decompose c_2 in base T:
     #more precisely, each coefficient of c_2 is decomposed in base T such that c_2 = sum T**i * c_2(i).
     Reps = np.zeros((n, l + 1), dtype = np.int64)
     for i in range(n):
@@ -339,7 +348,7 @@ def mul_cipher_v1(ct1, ct2, q, t, T, poly_mod , rlk0, rlk1):
 
     c_20 = np.zeros(shape=n)
     c_21 = np.zeros(shape=n)
-    # Here we compute the sums: rlk[j][0] * c_2(j) and rlk[j][1] * c_2(j) 
+    # Here we compute the sums: rlk[j][0] * c_2(j) and rlk[j][1] * c_2(j)
     for j in range(l + 1):
         c_20 = polyadd_wm(c_20, polymul_wm(rlk0[j], Reps[:,j], poly_mod), poly_mod)
         c_21 = polyadd_wm(c_21, polymul_wm(rlk1[j], Reps[:,j], poly_mod), poly_mod)
