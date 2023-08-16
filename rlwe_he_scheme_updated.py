@@ -8,8 +8,6 @@ import numpy as np
 from numpy.polynomial import polynomial as poly
 
 # ------Functions for polynomial evaluations mod poly_mod only------
-
-
 def polymul_wm(x, y, poly_mod):
     """Multiply two polynomials
     Args:
@@ -33,8 +31,6 @@ def polyadd_wm(x, y, poly_mod):
 # ==============================================================
 
 # ------Functions for polynomial evaluations both mod poly_mod and mod q-----
-
-
 def polymul(x, y, modulus, poly_mod):
     """Multiply two polynomials
     Args:
@@ -66,8 +62,6 @@ def polyadd(x, y, modulus, poly_mod):
 # ==============================================================
 
 # -------Functions for random polynomial generation--------
-
-
 def gen_binary_poly(size):
     """Generates a polynomial with coeffecients in [0, 1]
     Args:
@@ -106,8 +100,6 @@ def gen_normal_poly(size, mean, std):
 # ==============================================================
 
 # -------- Function for returning n's coefficients in base b ( lsb is on the left) ---
-
-
 def int2base(n, b):
     """Generates the base decomposition of an integer n.
     Args:
@@ -251,7 +243,6 @@ def decrypt(sk, size, q, t, poly_mod, ct):
     else:
         decrypted_poly_to_return = decrypted_poly
     return np.int64(decrypted_poly_to_return)
-
 # ==============================================================
 
 
